@@ -15,6 +15,9 @@ environment {
         }
 
     stage('SonarQube analysis') {
+    tools {
+        jdk "jdk17" 
+    }
     environment{
         scannerHome = tool 'santi-sonar-scanner'
     }
