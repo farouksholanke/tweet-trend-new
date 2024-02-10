@@ -15,14 +15,23 @@ environment {
         }
 
     stage('SonarQube analysis') {
+    tools {
+        jdk "JDK17" 
+    }
     environment{
         scannerHome = tool 'santi-sonar-scanner'
+        JAVA_HOME = "${tool 'JDK17'}" // Set JAVA_HOME to the JDK 17 installation provided by Jenkins tool configuration
+            }
     }
     steps{
     withSonarQubeEnv('santi-sonarqube-server') { // If you have configured more than one global server connection, you can specify its name
-      sh "${scannerHome}/bin/sonar-scanner"
+      sh """
+                       export JAVA_HOME=${JAVA_HOME}
+                       export PATH=$JAVA_HOME/bin:$PATH
+                       ${scannerHome}/bin/sonar-scanner
+                       """
     }
     }
   }    
     }
-}
+
