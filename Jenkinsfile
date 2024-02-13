@@ -22,8 +22,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('santi-sonarqube-server') { 
                     sh """
-                        export JAVA_HOME=${JAVA_HOME}
-                        export PATH=$JAVA_HOME/bin:$PATH
+                       
                         ${scannerHome}/bin/sonar-scanner
                     """
                 }
