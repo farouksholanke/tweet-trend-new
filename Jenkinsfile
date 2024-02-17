@@ -15,7 +15,14 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                sh 'mvn clean deploy'
+                // Explicitly set JAVA_HOME and PATH for the Maven command
+                sh """
+                    export JAVA_HOME=\$(echo \${JAVA_HOME})
+                    export PATH=\$JAVA_HOME/bin:\$PATH
+                    echo "JAVA_HOME = \$JAVA_HOME"
+                    echo "PATH = \$PATH"
+                    mvn clean deploy
+                """
             }
         }
         stage('SonarQube analysis') {
