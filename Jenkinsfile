@@ -5,7 +5,11 @@ pipeline {
         }
     }
     environment {
-        PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
+        // Set global environment variables here if needed
+    }
+    tools {
+        // Ensure JDK17 is defined in Jenkins Global Tool Configuration
+        jdk 'JDK17'
     }
     stages {
         stage("Build") {
@@ -13,18 +17,15 @@ pipeline {
                 sh 'mvn clean deploy'
             }
         }
-
         stage('SonarQube analysis') {
-            environment {
-                scannerHome = tool 'santi-sonar-scanner'
-                JAVA_HOME = tool 'JDK17' // This will set JAVA_HOME to the JDK 17 installation provided by Jenkins tool configuration
-                
-            }
             steps {
-                withSonarQubeEnv('santi-sonarqube-server') { 
+                withSonarQubeEnv('santi-sonarqube-server') {
+                    // Directly use the JAVA_HOME and PATH variables provided by the Jenkins JDK tool
                     sh """
-                        export JAVA_HOME=${JAVA_HOME}
-                        export PATH=$JAVA_HOME/bin:$PATH
+                        export JAVA_HOME=\$(echo \${JAVA_HOME})
+                        export PATH=\$JAVA_HOME/bin:\$PATH
+                        echo "Using Java at \$JAVA_HOME with version:"
+                        java -version
                         ${scannerHome}/bin/sonar-scanner
                     """
                 }
