@@ -5,9 +5,8 @@ pipeline {
         }
     }
     environment {
-        PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
-        JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
-        // Set global environment variables here if needed
+        // Prepend the Maven bin directory to the PATH for all stages
+        PATH = "/opt/apache-maven-3.9.6/bin:${env.PATH}"
     }
     tools {
         // Ensure JDK17 is defined in Jenkins Global Tool Configuration
@@ -28,6 +27,8 @@ pipeline {
                         export PATH=\$JAVA_HOME/bin:\$PATH
                         echo "Using Java at \$JAVA_HOME with version:"
                         java -version
+                        // Ensure Maven is correctly recognized
+                        mvn -version
                         ${scannerHome}/bin/sonar-scanner
                     """
                 }
@@ -35,4 +36,3 @@ pipeline {
         }
     }
 }
-
